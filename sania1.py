@@ -3,7 +3,7 @@ import tempfile
 import moviepy.editor as mp
 import requests
 import time
-import pyttsx3
+from gtts import gTTS
 import os
 
 # AssemblyAI API Key
@@ -42,18 +42,13 @@ def gpt4_correct_transcription(transcription):
     # For now, we’ll just return the transcription as-is.
     return transcription
 
-# Text-to-Speech: Function to convert text to speech using pyttsx3
-def text_to_speech_freetts(text):
-    engine = pyttsx3.init()  # Initialize pyttsx3 engine
-    engine.setProperty('rate', 150)  # Set speaking rate (optional)
-    engine.setProperty('volume', 1)  # Set volume level (optional)
-
-    # Save the spoken text to an MP3 file
+# Text-to-Speech: Function to convert text to speech using gTTS (Google Text-to-Speech)
+def text_to_speech_gtts(text):
+    # Convert text to speech
+    tts = gTTS(text)
     audio_file_path = 'output.mp3'
-    engine.save_to_file(text, audio_file_path)
-    engine.runAndWait()
+    tts.save(audio_file_path)  # Save to a file
 
-    # Return the path to the audio file
     return audio_file_path
 
 # Function to replace audio in video using MoviePy
@@ -77,7 +72,7 @@ def replace_audio_in_video(video_path, audio_path):
 
 # Main Streamlit App
 def main():
-    st.title("Video Audio Transcription and Correction App (AssemblyAI + pyttsx3)")
+    st.title("Video Audio Transcription and Correction App (AssemblyAI + gTTS)")
 
     video_file = st.file_uploader("Upload a video", type=["mp4"])
 
@@ -97,8 +92,8 @@ def main():
             corrected_transcription = gpt4_correct_transcription(transcription)
             st.write("Corrected Transcription:", corrected_transcription)
 
-            st.write("Generating new audio using pyttsx3 Text-to-Speech...")
-            audio_path = text_to_speech_freetts(corrected_transcription)
+            st.write("Generating new audio using gTTS Text-to-Speech...")
+            audio_path = text_to_speech_gtts(corrected_transcription)
 
             st.write("Replacing audio in the video...")
             output_video = replace_audio_in_video(temp_file.name, audio_path)
