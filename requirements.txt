@@ -1,4 +1,5 @@
-streamlit
+gTTS
 moviepy
 requests
-pyttsx3
+streamlit
+
