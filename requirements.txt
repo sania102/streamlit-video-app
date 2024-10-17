@@ -1,5 +1,4 @@
-gTTS
+streamlit
 moviepy
 requests
-streamlit
-
+gtts
